@@ -1,5 +1,7 @@
 // Importa el módulo 'path' de Node.js para trabajar con rutas de archivos y directorios
 import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
 
 // Importa 'fileURLToPath' del módulo 'url' de Node.js para convertir una URL de archivo en una ruta de archivo
 import { fileURLToPath } from 'url';
@@ -40,5 +42,11 @@ export default {
     },
     devServer: {
         port: 8082
-    }
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './public/index.html',
+            filename: 'index.html',
+        })
+    ]
 };

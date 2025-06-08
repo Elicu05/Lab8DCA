@@ -164,7 +164,7 @@ export class MediaGallery extends HTMLElement {
             </style>
 
             <div class="gallery-header">
-                <h2>Your Media Files</h2>
+                <h2>Your Memes</h2>
                 <button class="sort-button" id="sortButton">Sort by Date</button>
             </div>
             <div class="grid-container" id="gridContainer">

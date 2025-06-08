@@ -16,8 +16,10 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "copy-webpack-plugin": "^13.0.0",
     "eslint": "^9.22.0",
     "globals": "^16.0.0",
+    "html-webpack-plugin": "^5.6.3",
     "husky": "^9.1.7",
     "ts-loader": "^9.5.2",
     "typescript": "^5.8.2",
