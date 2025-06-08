@@ -21,60 +21,71 @@ export class MemeUploader extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 :host {
-                    display: block;
-                    padding: 2rem;
-                    background: white;
-                    border-radius: 12px;
-                    transition: all 0.3s ease;
-                }
-
-                .upload-container {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
-                    align-items: center;
-                    max-width: 600px;
-                    margin: 0 auto;
-                }
-
-                .file-input-container,
-                button {
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    width: 100%;
-                    max-width: 400px;
+                    background: #fafbfc;
+                    width: 1150px;
+                    height: 470px;
+                    margin: 0 auto;
+                }
+                .main-card {
+                    background:rgb(192, 3, 213);
+                    border-radius: 40px;
+                    box-shadow: 0 8px 24px rgba(21, 119, 214, 0.18);
+                    padding: 3.5rem 2.5rem 2.5rem 2.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    min-width: 400px;
+                    max-width: 480px;
+                    margin: 2rem auto;
                 }
 
+                .main-title {
+                    color: #fff;
+                    font-size: 3rem;
+                    font-weight: 800;
+                    text-align: center;
+                    text-transform: uppercase;
+                    margin-bottom: 2.5rem;
+                    line-height: 1.1;
+                }
                 input[type="file"] {
                     display: none;
                 }
-
                 .custom-file-input {
-                    display: inline-block;
+                    display: none;
+                }
+                .upload-btn {
                     width: 100%;
                     padding: 1.2rem 2rem;
-                    background: linear-gradient(135deg, #2196F3, #1976D2);
-                    color: white;
-                    border-radius: 8px;
+                    background:rgb(22, 228, 46);
+                    color: #fff;
+                    border: none;
+                    border-radius: 18px;
                     cursor: pointer;
-                    text-align: center;
-                    transition: all 0.3s ease;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    box-shadow: 0 4px 6px rgba(33, 150, 243, 0.2);
+                    font-size: 2rem;
+                    font-weight: 700;
+                    box-shadow: 0 6px 16px rgba(0, 255, 42, 0.18);
+                    margin-top: 1.5rem;
+                    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
                 }
-
-                .custom-file-input:hover {
+                .upload-btn:hover:not(:disabled) {
+                    background: #0be022;
                     transform: translateY(-2px);
-                    box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3);
+                    box-shadow: 0 10px 24px rgba(0, 255, 42, 0.22);
                 }
-
-                .custom-file-input:active {
-                    transform: translateY(0);
+                .upload-btn:active {
+                    background: #0fff2a;
+                    transform: none;
                 }
-
+                .upload-btn:disabled {
+                    background:rgb(191, 198, 192);
+                    color: #fff;
+                    cursor: not-allowed;
+                    box-shadow: none;
+                }
                 progress {
                     width: 100%;
                     height: 8px;
@@ -82,51 +93,17 @@ export class MemeUploader extends HTMLElement {
                     display: none;
                     background: #f0f0f0;
                     overflow: hidden;
+                    margin-top: 1.2rem;
                 }
-
                 progress::-webkit-progress-bar {
                     background-color: #f0f0f0;
                     border-radius: 4px;
                 }
-
                 progress::-webkit-progress-value {
                     background: linear-gradient(90deg, #2196F3, #4CAF50);
                     border-radius: 4px;
                     transition: width 0.3s ease;
                 }
-
-                button {
-                    width: 100%;
-                    max-width: 400px;
-                    padding: 1.2rem 2rem;
-                    background: linear-gradient(135deg, #4CAF50, #45a049);
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
-                }
-
-                button:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
-                }
-
-                button:active {
-                    transform: translateY(0);
-                }
-
-                button:disabled {
-                    background: #ccc;
-                    cursor: not-allowed;
-                    transform: none;
-                    box-shadow: none;
-                }
-
                 .error-message {
                     color: #f44336;
                     margin-top: 1rem;
@@ -137,26 +114,26 @@ export class MemeUploader extends HTMLElement {
                     text-align: center;
                     font-weight: 500;
                 }
-
-                @media (max-width: 768px) {
-                    :host {
-                        padding: 1.5rem;
+                @media (max-width: 600px) {
+                    .main-card {
+                        min-width: unset;
+                        width: 95vw;
+                        padding: 2rem 0.5rem 1.5rem 0.5rem;
                     }
-
-                    .custom-file-input,
-                    button {
-                        padding: 1rem 1.5rem;
+                    .main-title {
+                        font-size: 2rem;
+                    }
+                    .upload-btn {
+                        font-size: 1.2rem;
+                        padding: 1rem 0.5rem;
                     }
                 }
             </style>
-
-            <div class="upload-container">
-                <div class="file-input-container">
-                    <input type="file" id="memeInput" accept="image/*,video/*" multiple>
-                    <label for="memeInput" class="custom-file-input">Select Memes to Upload</label>
-                </div>
+            <div class="main-card">
+                <div class="main-title">click to SELECT MEMES</div>
+                <input type="file" id="memeInput" accept="image/*,video/*" multiple>
+                <button id="uploadButton" class="upload-btn" disabled>Upload selected memes</button>
                 <progress id="uploadProgress" value="0" max="100"></progress>
-                <button id="uploadButton" disabled>Upload Selected Memes</button>
                 <div id="errorMessage" class="error-message"></div>
             </div>
         `;
@@ -164,6 +141,15 @@ export class MemeUploader extends HTMLElement {
         this.uploadInput = this.shadowRoot.querySelector('#memeInput');
         this.progressBar = this.shadowRoot.querySelector('#uploadProgress');
         this.uploadButton = this.shadowRoot.querySelector('#uploadButton');
+
+        // Custom file input trigger
+        const mainCard = this.shadowRoot.querySelector('.main-card');
+        if (this.uploadInput && mainCard && this.uploadButton) {
+            mainCard.addEventListener('click', (e) => {
+                if (e.target === this.uploadButton) return;
+                this.uploadInput?.click();
+            });
+        }
     }
 
     private setupEventListeners() {

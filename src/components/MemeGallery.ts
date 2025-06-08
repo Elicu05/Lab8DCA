@@ -47,7 +47,7 @@ export class MemeGallery extends HTMLElement {
 
                 .sort-button {
                     padding: 0.8rem 1.5rem;
-                    background: linear-gradient(135deg, #2196F3, #1976D2);
+                    background: rgb(192, 3, 213);
                     color: white;
                     border: none;
                     border-radius: 8px;
@@ -62,7 +62,7 @@ export class MemeGallery extends HTMLElement {
 
                 .sort-button:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3);
+                    box-shadow: 0 6px 12px rgba(208, 33, 243, 0.3);
                 }
 
                 .sort-button:active {
@@ -165,7 +165,7 @@ export class MemeGallery extends HTMLElement {
             </style>
 
             <div class="gallery-header">
-                <h2>Meme Gallery</h2>
+                <h2>Your memes</h2>
                 <button class="sort-button" id="sortButton">Sort by Date</button>
             </div>
             <div class="grid-container" id="gridContainer">

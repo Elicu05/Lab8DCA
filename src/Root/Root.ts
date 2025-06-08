@@ -106,7 +106,7 @@ class Root extends HTMLElement {
                 }
             </style>
 
-            <h1>MemeWall</h1>
+            
             <meme-uploader></meme-uploader>
             <meme-gallery></meme-gallery>
             <meme-viewer></meme-viewer>
