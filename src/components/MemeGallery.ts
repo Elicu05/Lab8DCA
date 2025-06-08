@@ -1,7 +1,7 @@
-import { StorageService, MemeMetadata } from '../services/supabase/storageService';
+import { MediaStorageService, MediaFileMetadata } from '../services/supabase/storageService';
 
-export class MemeGallery extends HTMLElement {
-    private memes: MemeMetadata[] = [];
+export class MediaGallery extends HTMLElement {
+    private mediaFiles: MediaFileMetadata[] = [];
     private sortOrder: 'date' | 'random' = 'date';
     private gridContainer: HTMLDivElement | null = null;
     private sortButton: HTMLButtonElement | null = null;
@@ -13,7 +13,7 @@ export class MemeGallery extends HTMLElement {
 
     connectedCallback() {
         this.render();
-        this.loadMemes();
+        this.loadMediaFiles();
         this.setupEventListeners();
     }
 
@@ -71,7 +71,7 @@ export class MemeGallery extends HTMLElement {
                     padding: 1rem 0;
                 }
 
-                .meme-card {
+                .media-card {
                     position: relative;
                     border-radius: 4px;
                     overflow: hidden;
@@ -82,11 +82,11 @@ export class MemeGallery extends HTMLElement {
                     aspect-ratio: 3/4;
                 }
 
-                .meme-card:hover {
+                .media-card:hover {
                     box-shadow: 0 4px 12px rgba(192, 3, 213, 0.15);
                 }
 
-                .meme-card::before {
+                .media-card::before {
                     content: '';
                     position: absolute;
                     top: 0;
@@ -102,18 +102,18 @@ export class MemeGallery extends HTMLElement {
                     z-index: 1;
                 }
 
-                .meme-card:hover::before {
+                .media-card:hover::before {
                     opacity: 1;
                 }
 
-                .meme-card img,
-                .meme-card video {
+                .media-card img,
+                .media-card video {
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
                 }
 
-                .meme-card video {
+                .media-card video {
                     background: #000;
                 }
 
@@ -164,7 +164,7 @@ export class MemeGallery extends HTMLElement {
             </style>
 
             <div class="gallery-header">
-                <h2>Your memes</h2>
+                <h2>Your Media Files</h2>
                 <button class="sort-button" id="sortButton">Sort by Date</button>
             </div>
             <div class="grid-container" id="gridContainer">
@@ -182,56 +182,56 @@ export class MemeGallery extends HTMLElement {
         this.sortButton.addEventListener('click', () => {
             this.sortOrder = this.sortOrder === 'date' ? 'random' : 'date';
             this.sortButton!.textContent = `Sort by ${this.sortOrder === 'date' ? 'Random' : 'Date'}`;
-            this.renderMemes();
+            this.renderMediaFiles();
         });
 
-        // Listen for new meme uploads
-        this.addEventListener('meme-uploaded', () => {
-            this.loadMemes();
+        // Listen for new media uploads
+        this.addEventListener('media-uploaded', () => {
+            this.loadMediaFiles();
         });
     }
 
-    private async loadMemes() {
+    private async loadMediaFiles() {
         if (!this.gridContainer) return;
 
         try {
-            this.memes = await StorageService.getMemes();
-            this.renderMemes();
+            this.mediaFiles = await MediaStorageService.getAllMediaFiles();
+            this.renderMediaFiles();
         } catch (error) {
             console.log(error);
             this.gridContainer.innerHTML = `
                 <div class="error">
-                    Error loading memes. Please try again later.
+                    Error loading media files. Please try again later.
                 </div>
             `;
         }
     }
 
-    private renderMemes() {
+    private renderMediaFiles() {
         if (!this.gridContainer) return;
 
-        const sortedMemes = [...this.memes];
+        const sortedMediaFiles = [...this.mediaFiles];
         if (this.sortOrder === 'random') {
-            sortedMemes.sort(() => Math.random() - 0.5);
+            sortedMediaFiles.sort(() => Math.random() - 0.5);
         }
 
-        this.gridContainer.innerHTML = sortedMemes.map(meme => `
-            <div class="meme-card" data-id="${meme.id}">
-                ${meme.type.startsWith('video/') 
-                    ? `<video src="${meme.url}" muted loop playsinline></video>`
-                    : `<img src="${meme.url}" alt="${meme.name}">`
+        this.gridContainer.innerHTML = sortedMediaFiles.map(mediaFile => `
+            <div class="media-card" data-id="${mediaFile.id}">
+                ${mediaFile.type.startsWith('video/') 
+                    ? `<video src="${mediaFile.url}" muted loop playsinline></video>`
+                    : `<img src="${mediaFile.url}" alt="${mediaFile.name}">`
                 }
             </div>
         `).join('');
 
-        // Add click handlers for each meme
-        this.gridContainer.querySelectorAll('.meme-card').forEach(card => {
+        // Add click handlers for each media file
+        this.gridContainer.querySelectorAll('.media-card').forEach(card => {
             card.addEventListener('click', () => {
                 const id = card.getAttribute('data-id');
-                const meme = this.memes.find(m => m.id === id);
-                if (meme) {
-                    this.dispatchEvent(new CustomEvent('meme-selected', {
-                        detail: meme,
+                const mediaFile = this.mediaFiles.find(m => m.id === id);
+                if (mediaFile) {
+                    this.dispatchEvent(new CustomEvent('media-selected', {
+                        detail: mediaFile,
                         bubbles: true,
                         composed: true
                     }));
@@ -249,4 +249,4 @@ export class MemeGallery extends HTMLElement {
     }
 }
 
-customElements.define('meme-gallery', MemeGallery); 
+customElements.define('meme-gallery', MediaGallery); 

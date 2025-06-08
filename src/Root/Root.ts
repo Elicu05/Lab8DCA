@@ -1,10 +1,10 @@
 import '../components/MemeUploader';
 import '../components/MemeGallery';
 import '../components/MemeViewer';
-import { MemeMetadata} from '../services/supabase/storageService';
+import { MediaFileMetadata } from '../services/supabase/storageService';
 
-class Root extends HTMLElement {
-    private memeViewer: HTMLElement | null = null;
+class AppRoot extends HTMLElement {
+    private mediaViewer: HTMLElement | null = null;
 
     constructor() {
         super();
@@ -14,14 +14,13 @@ class Root extends HTMLElement {
     async connectedCallback() {
         this.render();
         this.setupEventListeners();
-    
     }
 
-    private showError(message: string) {
+    private displayErrorMessage(message: string) {
         if (!this.shadowRoot) return;
         
-        const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = `
+        const errorNotification = document.createElement('div');
+        errorNotification.style.cssText = `
             position: fixed;
             top: 20px;
             left: 50%;
@@ -33,11 +32,11 @@ class Root extends HTMLElement {
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         `;
-        errorDiv.textContent = message;
-        this.shadowRoot.appendChild(errorDiv);
+        errorNotification.textContent = message;
+        this.shadowRoot.appendChild(errorNotification);
 
         setTimeout(() => {
-            errorDiv.remove();
+            errorNotification.remove();
         }, 5000);
     }
 
@@ -106,25 +105,23 @@ class Root extends HTMLElement {
                 }
             </style>
 
-            
             <meme-uploader></meme-uploader>
             <meme-gallery></meme-gallery>
             <meme-viewer></meme-viewer>
         `;  
 
-        this.memeViewer = this.shadowRoot.querySelector('meme-viewer');
+        this.mediaViewer = this.shadowRoot.querySelector('meme-viewer');
     }
 
     private setupEventListeners() {
-        if (!this.memeViewer) return;
+        if (!this.mediaViewer) return;
 
-        // Listen for meme selection from the gallery
-        this.addEventListener('meme-selected', ((event: CustomEvent<MemeMetadata>) => {
-            if (this.memeViewer && 'show' in this.memeViewer && typeof (this.memeViewer as { show: (meme: MemeMetadata) => void }).show === 'function') {
-                (this.memeViewer as { show: (meme: MemeMetadata) => void }).show(event.detail);
+        this.addEventListener('media-selected', ((event: CustomEvent<MediaFileMetadata>) => {
+            if (this.mediaViewer && 'show' in this.mediaViewer && typeof (this.mediaViewer as { show: (media: MediaFileMetadata) => void }).show === 'function') {
+                (this.mediaViewer as { show: (media: MediaFileMetadata) => void }).show(event.detail);
             }
         }) as EventListener);
     }
 }
 
-export default Root;
+export default AppRoot;

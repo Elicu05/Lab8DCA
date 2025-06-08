@@ -1,6 +1,6 @@
-import Root from "./Root/Root";
+import AppRoot from "./Root/Root";
 
 
-customElements.define('root-element', Root);
+customElements.define('root-element', AppRoot);
 console.log("Hola");
 

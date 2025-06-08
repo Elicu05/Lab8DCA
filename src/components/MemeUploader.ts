@@ -1,8 +1,8 @@
-import { StorageService} from '../services/supabase/storageService';
+import { MediaStorageService } from '../services/supabase/storageService';
 
-export class MemeUploader extends HTMLElement {
-    private uploadInput: HTMLInputElement | null = null;
-    private progressBar: HTMLProgressElement | null = null;
+export class MediaUploader extends HTMLElement {
+    private fileInput: HTMLInputElement | null = null;
+    private uploadProgressBar: HTMLProgressElement | null = null;
     private uploadButton: HTMLButtonElement | null = null;
 
     constructor() {
@@ -130,93 +130,92 @@ export class MemeUploader extends HTMLElement {
                 }
             </style>
             <div class="main-card">
-                <div class="main-title">click to SELECT MEMES</div>
-                <input type="file" id="memeInput" accept="image/*,video/*" multiple>
-                <button id="uploadButton" class="upload-btn" disabled>Upload selected memes</button>
+                <div class="main-title">click to SELECT MEDIA</div>
+                <input type="file" id="mediaInput" accept="image/*,video/*" multiple>
+                <button id="uploadButton" class="upload-btn" disabled>Upload selected files</button>
                 <progress id="uploadProgress" value="0" max="100"></progress>
                 <div id="errorMessage" class="error-message"></div>
             </div>
         `;
 
-        this.uploadInput = this.shadowRoot.querySelector('#memeInput');
-        this.progressBar = this.shadowRoot.querySelector('#uploadProgress');
+        this.fileInput = this.shadowRoot.querySelector('#mediaInput');
+        this.uploadProgressBar = this.shadowRoot.querySelector('#uploadProgress');
         this.uploadButton = this.shadowRoot.querySelector('#uploadButton');
 
-        // Custom file input trigger
         const mainCard = this.shadowRoot.querySelector('.main-card');
-        if (this.uploadInput && mainCard && this.uploadButton) {
+        if (this.fileInput && mainCard && this.uploadButton) {
             mainCard.addEventListener('click', (e) => {
                 if (e.target === this.uploadButton) return;
-                this.uploadInput?.click();
+                this.fileInput?.click();
             });
         }
     }
 
     private setupEventListeners() {
-        if (!this.uploadInput || !this.uploadButton) return;
+        if (!this.fileInput || !this.uploadButton) return;
 
-        this.uploadInput.addEventListener('change', () => {
+        this.fileInput.addEventListener('change', () => {
             if (this.uploadButton) {
-                this.uploadButton.disabled = !this.uploadInput?.files?.length;
+                this.uploadButton.disabled = !this.fileInput?.files?.length;
             }
         });
 
         this.uploadButton.addEventListener('click', async () => {
-            if (!this.uploadInput?.files?.length) return;
+            if (!this.fileInput?.files?.length) return;
 
-            const files = Array.from(this.uploadInput.files);
+            const files = Array.from(this.fileInput.files);
             await this.uploadFiles(files);
         });
     }
 
     private async uploadFiles(files: File[]) {
-        if (!this.progressBar || !this.uploadButton) return;
+        if (!this.uploadProgressBar || !this.uploadButton) return;
 
         console.log('Starting upload of files:', files.map(f => f.name));
-        this.progressBar.style.display = 'block';
+        this.uploadProgressBar.style.display = 'block';
         this.uploadButton.disabled = true;
 
         for (const file of files) {
             try {
                 console.log('Uploading file:', file.name, 'Type:', file.type, 'Size:', file.size);
-                const result = await StorageService.uploadMeme({
+                const result = await MediaStorageService.uploadMediaFile({
                     file,
                     onProgress: (progress) => {
                         console.log('Upload progress:', progress, '%');
-                        if (this.progressBar) {
-                            this.progressBar.value = progress;
+                        if (this.uploadProgressBar) {
+                            this.uploadProgressBar.value = progress;
                         }
                     }
                 });
 
                 console.log('Upload result:', result);
                 if (result) {
-                    console.log('Dispatching meme-uploaded event');
-                    this.dispatchEvent(new CustomEvent('meme-uploaded', {
+                    console.log('Dispatching media-uploaded event');
+                    this.dispatchEvent(new CustomEvent('media-uploaded', {
                         detail: result,
                         bubbles: true,
                         composed: true
                     }));
                 } else {
                     console.error('Upload failed - no result returned');
-                    this.showError('Error uploading file: ' + file.name);
+                    this.displayErrorMessage('Error uploading file: ' + file.name);
                 }
             } catch (error) {
                 console.error('Error in uploadFiles:', error);
-                this.showError('Error uploading file: ' + file.name);
+                this.displayErrorMessage('Error uploading file: ' + file.name);
             }
         }
 
         // Reset the form
-        if (this.uploadInput) {
-            this.uploadInput.value = '';
+        if (this.fileInput) {
+            this.fileInput.value = '';
         }
-        this.progressBar.style.display = 'none';
-        this.progressBar.value = 0;
+        this.uploadProgressBar.style.display = 'none';
+        this.uploadProgressBar.value = 0;
         this.uploadButton.disabled = true;
     }
 
-    private showError(message: string) {
+    private displayErrorMessage(message: string) {
         const errorElement = this.shadowRoot?.querySelector('#errorMessage') as HTMLElement;
         if (errorElement) {
             errorElement.textContent = message;
@@ -228,4 +227,4 @@ export class MemeUploader extends HTMLElement {
     }
 }
 
-customElements.define('meme-uploader', MemeUploader); 
+customElements.define('meme-uploader', MediaUploader); 

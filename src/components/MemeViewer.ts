@@ -1,7 +1,7 @@
-import { MemeMetadata } from '../services/supabase/storageService';
+import { MediaFileMetadata } from '../services/supabase/storageService';
 
-export class MemeViewer extends HTMLElement {
-    private meme: MemeMetadata | null = null;
+export class MediaViewer extends HTMLElement {
+    private mediaFile: MediaFileMetadata | null = null;
     private modal: HTMLDivElement | null = null;
     private closeButton: HTMLButtonElement | null = null;
     private mediaContainer: HTMLDivElement | null = null;
@@ -103,20 +103,20 @@ export class MemeViewer extends HTMLElement {
                     transform: rotate(90deg);
                 }
 
-                .meme-info {
+                .media-info {
                     background: white;
                     padding: 1rem;
                     border-top: 1px solid #dbdbdb;
                 }
 
-                .meme-name {
+                .media-name {
                     margin: 0;
                     font-weight: 600;
                     font-size: 1rem;
                     color: #262626;
                 }
 
-                .meme-date {
+                .media-date {
                     margin: 0.5rem 0 0;
                     color: #8e8e8e;
                     font-size: 0.9rem;
@@ -143,7 +143,7 @@ export class MemeViewer extends HTMLElement {
                         font-size: 1rem;
                     }
 
-                    .meme-info {
+                    .media-info {
                         padding: 0.8rem;
                     }
                 }
@@ -153,9 +153,9 @@ export class MemeViewer extends HTMLElement {
                 <div class="modal-content">
                     <button class="close-button" id="closeButton">&times;</button>
                     <div class="media-container" id="mediaContainer"></div>
-                    <div class="meme-info">
-                        <h3 class="meme-name"></h3>
-                        <p class="meme-date"></p>
+                    <div class="media-info">
+                        <h3 class="media-name"></h3>
+                        <p class="media-date"></p>
                     </div>
                 </div>
             </div>
@@ -187,28 +187,28 @@ export class MemeViewer extends HTMLElement {
         });
     }
 
-    public show(meme: MemeMetadata) {
+    public show(mediaFile: MediaFileMetadata) {
         if (!this.modal || !this.mediaContainer) return;
 
-        this.meme = meme;
+        this.mediaFile = mediaFile;
         this.style.display = 'block';
 
         // Update content
-        const mediaElement = meme.type.startsWith('video/')
-            ? `<video src="${meme.url}" controls autoplay loop></video>`
-            : `<img src="${meme.url}" alt="${meme.name}">`;
+        const mediaElement = mediaFile.type.startsWith('video/')
+            ? `<video src="${mediaFile.url}" controls autoplay loop></video>`
+            : `<img src="${mediaFile.url}" alt="${mediaFile.name}">`;
 
         this.mediaContainer.innerHTML = mediaElement;
 
         // Update info
-        const nameElement = this.shadowRoot?.querySelector('.meme-name');
-        const dateElement = this.shadowRoot?.querySelector('.meme-date');
+        const nameElement = this.shadowRoot?.querySelector('.media-name');
+        const dateElement = this.shadowRoot?.querySelector('.media-date');
 
         if (nameElement) {
-            nameElement.textContent = meme.name;
+            nameElement.textContent = mediaFile.name;
         }
         if (dateElement) {
-            dateElement.textContent = new Date(meme.created_at).toLocaleDateString();
+            dateElement.textContent = new Date(mediaFile.created_at).toLocaleDateString();
         }
 
         // Show modal with animation
@@ -223,7 +223,7 @@ export class MemeViewer extends HTMLElement {
         this.modal.classList.remove('active');
         setTimeout(() => {
             this.style.display = 'none';
-            this.meme = null;
+            this.mediaFile = null;
             if (this.mediaContainer) {
                 this.mediaContainer.innerHTML = '';
             }
@@ -231,4 +231,4 @@ export class MemeViewer extends HTMLElement {
     }
 }
 
-customElements.define('meme-viewer', MemeViewer); 
+customElements.define('meme-viewer', MediaViewer); 
