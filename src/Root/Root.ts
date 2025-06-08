@@ -52,7 +52,7 @@ class Root extends HTMLElement {
                     margin: 0 auto;
                     padding: 2rem;
                     min-height: 100vh;
-                    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+                    background:rgb(192, 3, 213);
                 }
 
                 h1 {

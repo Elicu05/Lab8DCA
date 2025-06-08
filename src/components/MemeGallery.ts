@@ -24,9 +24,10 @@ export class MemeGallery extends HTMLElement {
             <style>
                 :host {
                     display: block;
-                    padding: 2rem;
-                    background: white;
-                    border-radius: 12px;
+                    max-width: 935px;
+                    margin: 0 auto;
+                    padding: 2rem 1rem;
+                    background: #fafafa;
                 }
 
                 .gallery-header {
@@ -34,62 +35,55 @@ export class MemeGallery extends HTMLElement {
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 2rem;
-                    padding-bottom: 1rem;
-                    border-bottom: 2px solid #f0f0f0;
+                    padding: 1rem;
+                    background: white;
+                    border-radius: 8px;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
                 }
 
                 .gallery-header h2 {
-                    color: #2c3e50;
-                    font-size: 1.8rem;
-                    font-weight: 700;
+                    color: #262626;
+                    font-size: 1.5rem;
+                    font-weight: 600;
                     margin: 0;
                 }
 
                 .sort-button {
-                    padding: 0.8rem 1.5rem;
+                    padding: 0.6rem 1.2rem;
                     background: rgb(192, 3, 213);
                     color: white;
                     border: none;
-                    border-radius: 8px;
+                    border-radius: 20px;
                     cursor: pointer;
-                    transition: all 0.3s ease;
+                    transition: all 0.2s ease;
                     font-weight: 600;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
                     font-size: 0.9rem;
-                    box-shadow: 0 4px 6px rgba(33, 150, 243, 0.2);
                 }
 
                 .sort-button:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 6px 12px rgba(208, 33, 243, 0.3);
-                }
-
-                .sort-button:active {
-                    transform: translateY(0);
+                    background:rgb(147, 7, 162);
                 }
 
                 .grid-container {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                    gap: 1.5rem;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 12px;
                     padding: 1rem 0;
                 }
 
                 .meme-card {
                     position: relative;
-                    border-radius: 12px;
+                    border-radius: 4px;
                     overflow: hidden;
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                    transition: all 0.3s ease;
+                    background: white;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                    transition: all 0.2s ease;
                     cursor: pointer;
-                    aspect-ratio: 1;
-                    background: #f8f9fa;
+                    aspect-ratio: 3/4;
                 }
 
                 .meme-card:hover {
-                    transform: translateY(-5px);
-                    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+                    box-shadow: 0 4px 12px rgba(192, 3, 213, 0.15);
                 }
 
                 .meme-card::before {
@@ -99,9 +93,12 @@ export class MemeGallery extends HTMLElement {
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.7));
+                    background: linear-gradient(to bottom, 
+                        rgba(192, 3, 213, 0.1),
+                        rgba(192, 3, 213, 0.2)
+                    );
                     opacity: 0;
-                    transition: opacity 0.3s ease;
+                    transition: opacity 0.2s ease;
                     z-index: 1;
                 }
 
@@ -114,12 +111,6 @@ export class MemeGallery extends HTMLElement {
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
-                    transition: transform 0.3s ease;
-                }
-
-                .meme-card:hover img,
-                .meme-card:hover video {
-                    transform: scale(1.05);
                 }
 
                 .meme-card video {
@@ -129,26 +120,33 @@ export class MemeGallery extends HTMLElement {
                 .loading {
                     text-align: center;
                     padding: 3rem;
-                    font-size: 1.2rem;
-                    color: #666;
-                    background: #f8f9fa;
-                    border-radius: 12px;
+                    font-size: 1.1rem;
+                    color: #8e8e8e;
+                    background: white;
+                    border-radius: 8px;
                     margin: 2rem 0;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
                 }
 
                 .error {
-                    color: #f44336;
+                    color: #ed4956;
                     text-align: center;
                     padding: 2rem;
-                    background: rgba(244, 67, 54, 0.1);
-                    border-radius: 12px;
+                    background: white;
+                    border-radius: 8px;
                     margin: 2rem 0;
                     font-weight: 500;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
                 }
 
                 @media (max-width: 768px) {
                     :host {
-                        padding: 1.5rem;
+                        padding: 1rem;
+                    }
+
+                    .grid-container {
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 4px;
                     }
 
                     .gallery-header {
@@ -156,10 +154,11 @@ export class MemeGallery extends HTMLElement {
                         gap: 1rem;
                         text-align: center;
                     }
+                }
 
+                @media (max-width: 480px) {
                     .grid-container {
-                        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                        gap: 1rem;
+                        grid-template-columns: 1fr;
                     }
                 }
             </style>
@@ -169,7 +168,7 @@ export class MemeGallery extends HTMLElement {
                 <button class="sort-button" id="sortButton">Sort by Date</button>
             </div>
             <div class="grid-container" id="gridContainer">
-                <div class="loading">Loading memes...</div>
+                <div class="loading">Loading your content...</div>
             </div>
         `;
 
